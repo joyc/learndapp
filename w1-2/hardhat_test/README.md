@@ -19,3 +19,9 @@ npx hardhat help
 * 使用Hardhat部署修改后的Counter
 * 使用Hardhat测试Counter
 * 写一个脚本调用count()
+
+## 提交作业
+* 合约地址：[ropsten](https://ropsten.etherscan.io/address/0xb75e7216bf84a9ef13c4443880c1e19d6fb504bd)
+* 合约：`hardhat_test/contracts/Counter.sol`
+* 测试：`hardhat_test/test/test.js`
+* 合约：`hardhat_test/contracts/Counter.sol`
