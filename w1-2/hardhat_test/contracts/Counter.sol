@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0
+//  SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 contract Counter {
@@ -9,7 +9,7 @@ contract Counter {
     function count() public {
         counter++;
     }
-    function set(uint x) public {
+    function add(uint x) public {
         counter = counter + x;
     }
 }
