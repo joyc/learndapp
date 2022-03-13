@@ -35,7 +35,7 @@ contract testPayable {
         require(success, "Failed to send Ether");
     }
 
-    // donot use this code
+    // donot use this code 会有重入问题
     function withdraw() public {
         (bool success, ) = msg.sender.call{value: deposits[msg.sender]}("");
         deposits[msg.sender] = 0;
