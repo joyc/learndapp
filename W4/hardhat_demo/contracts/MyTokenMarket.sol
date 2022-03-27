@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "./IUniswapV2Router01.sol";
+import "./MasterChef.sol";
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -39,5 +40,24 @@ contract MyTokenMarket {
         path[1] = myToken;
 
         IUniswapV2Router01(router).swapExactETHForTokens{value : msg.value}(minTokenAmount, path, msg.sender, block.timestamp);
+
+        // w4-2 完成代币兑换后，直接质押 `MasterChef`
+        uint tokenAmount = IERC20(myToken).balanceOf(address(this));
+        IERC20(myToken).approve(masterChef, tokenAmount); // 授权 masterChef
+        MasterChef(masterChef).deposit(0, tokenAmount);
+        // depositAmounts[msg.sender] += tokenAmount; // 存储用户的质押的押金数量
+    }
+
+    // w4-2 增加withdraw方法，从MasterChef提取Token
+    function withdraw(uint256 _amount) external {
+        // 判断用户是否有足够的Token
+        require(_amount > 0, 'Withdraw amount must be greater than 0');
+        MasterChef(masterChef).withdraw(0, _amount); // 提取到 Market 合约中
+        IERC20(myToken).safeApprove(address(this), _amount);
+        IERC20(myToken).safeTransfer(msg.sender, _amount); // 转给用户
+        // LP 给用户发放代币
+        uint sushiTokenAmount = IERC20(MasterChef(masterChef).sushi()).balanceOf(address(this));
+        // console.log("sushiTokenAmount:", sushiTokenAmount);
+        IERC20(MasterChef(masterChef).sushi()).safeTransfer(msg.sender, sushiTokenAmount);
     }
 }
