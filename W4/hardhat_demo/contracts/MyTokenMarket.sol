@@ -20,26 +20,27 @@ contract MyTokenMarket {
         weth = _weth;
     }
 
-    // 添加流动性
-    function AddLiquidity(uint tokenAmount) public payable {
-        IERC20(myToken).safeTransferFrom(msg.sender, address(this),tokenAmount);
-        IERC20(myToken).safeApprove(router, tokenAmount);
+    // 添加流动性 两种币 Token和 ETH
+    function AddLiquidity(uint tokenAmount) external payable {
+        IERC20(myToken).safeTransferFrom(msg.sender, address(this),tokenAmount);    // 发送者转给合约
+        IERC20(myToken).safeApprove(router, tokenAmount);   // 合约授权路由器转给发送者
 
         // ingnore slippage
         // (uint amountToken, uint amountETH, uint liquidity) = 
-        IUniswapV2Router01(router).addLiquidityETH{value: msg.value}(myToken, tokenAmount, 0, 0, msg.sender, block.timestamp);
+        IUniswapV2Router01(router).addLiquidityETH{value: msg.value}(myToken, 
+            tokenAmount, 0, 0, msg.sender, block.timestamp);
 
         // handle left: 多余的 ETH 返回给用户
         // if (msg.value > amountETH) TransferHelper.safeTransferETH(msg.sender, msg.value - amountETH);
     }
 
     // 用 ETH 购买 Token
-    function buyToken(uint minTokenAmount) public payable {
+    function buyToken(uint minTokenAmount) external payable {
         address[] memory path = new address[](2);
         path[0] = weth;
         path[1] = myToken;
 
-        IUniswapV2Router01(router).swapExactETHForTokens{value : msg.value}(minTokenAmount, path, msg.sender, block.timestamp);
+        IUniswapV2Router01(router).swapExactETHForTokens{value: msg.value}(minTokenAmount, path, msg.sender, block.timestamp);
 
         // w4-2 完成代币兑换后，直接质押 `MasterChef`
         uint tokenAmount = IERC20(myToken).balanceOf(address(this));

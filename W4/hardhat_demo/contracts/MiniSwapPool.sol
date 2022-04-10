@@ -19,7 +19,7 @@ contract MiniSwapPool is ERC20 {
 
     uint public constant INITIAL_SUPPLY = 10**5;
 
-    constructor(address _token0, address _token1) ERC20("LooneyLiquidityProvider", "LP") {
+    constructor(address _token0, address _token1) ERC20("LooneyLiquidityProvider", "LP") {  // 可以拿到 LP 的 token
         token0 = _token0;
         token1 = _token1;
     }
